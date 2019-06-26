@@ -1,0 +1,22 @@
+version: '3'
+services:
+  dev-php-apache:
+    build:
+      context: ./docker/dev/apache
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app
+    ports:
+      - "8080:80"
+  dev-php-cli:
+    build:
+      context: ./docker/dev/php-cli
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app
+  dev-composer:
+    build:
+      context: ./docker/dev/composer
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app

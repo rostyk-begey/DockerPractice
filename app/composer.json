@@ -1,0 +1,10 @@
+{
+    "name": "user/app",
+    "authors": [
+        {
+            "name": "user",
+            "email": "rostyslav.begey@inoxoft.com"
+        }
+    ],
+    "require": {}
+}

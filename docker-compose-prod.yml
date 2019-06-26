@@ -1,0 +1,16 @@
+version: '3'
+services:
+  prod-php-apache:
+    build:
+      context: ./docker/prod/apache
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+  prod-php-cli:
+    build:
+      context: ./docker/prod/php-cli
+      dockerfile: Dockerfile
+  prod-composer:
+    build:
+      context: ./docker/prod/composer
+      dockerfile: Dockerfile
