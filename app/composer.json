@@ -6,5 +6,7 @@
             "email": "rostyslav.begey@inoxoft.com"
         }
     ],
-    "require": {}
+    "require": {
+        "slim/slim": "^3.12"
+    }
 }
