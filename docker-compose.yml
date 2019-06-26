@@ -14,9 +14,3 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./app:/app
-  dev-composer:
-    build:
-      context: ./docker/dev/composer
-      dockerfile: Dockerfile
-    volumes:
-      - ./app:/app

@@ -45,5 +45,10 @@ docker-pull:
 docker-build:
 	sudo docker-compose build
 
+app-composer-install:
+	docker-compose run --rm dev-php-cli composer install
+
+app-init: app-composer-install
+
 up: docker-up
-init: docker-down-clear docker-pull docker-build docker-up
+init: docker-down-clear docker-pull docker-build docker-up app-init

@@ -10,7 +10,3 @@ services:
     build:
       context: ./docker/prod/php-cli
       dockerfile: Dockerfile
-  prod-composer:
-    build:
-      context: ./docker/prod/composer
-      dockerfile: Dockerfile
