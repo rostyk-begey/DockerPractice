@@ -1,49 +1,40 @@
-dev-up:
-	sudo docker run -d --name test-apache-img -v ${PWD}/app:/app -p 8080:80 test-apache-img
-
-dev-down:
-	sudo docker stop test-apache-img
-	sudo docker rmi test-apache-img
-
-dev-build:
-	sudo docker build --file=docker/dev/php-cli/Dockerfile --tag test-php-img app
-	sudo docker build --file=docker/dev/apache/Dockerfile --tag test-apache-img app
-
-dev-cli:
-	sudo docker run --rm -v ${PWD}/app:/app php bin/index.php
-
-prod-up:
-	sudo docker run -d --name test-apache-img -p 8080:80 test-apache-img
-
-prod-down:
-	sudo docker stop test-apache-img
-	sudo rmi test-apache-img
-
 prod-build:
-	sudo docker build --file=docker/prod/php-cli/Dockerfile --tag ${REGISTRY_ADDRESS}/test-php-img:${IMAGE_TAG} app
-	sudo docker build --file=docker/prod/apache/Dockerfile --tag ${REGISTRY_ADDRESS}/test-apache-img:${IMAGE_TAG} app
+	docker build --pull --file=docker/prod/nginx/Dockerfile --tag ${REGISTRY_ADDRESS}/nginx:${IMAGE_TAG} app
+	docker build --pull --file=docker/prod/php-cli/Dockerfile --tag ${REGISTRY_ADDRESS}/php-cli:${IMAGE_TAG} app
+	docker build --pull --file=docker/prod/php-fpm/Dockerfile --tag ${REGISTRY_ADDRESS}/php-fpm:${IMAGE_TAG} app
 
 prod-push:
-	sudo docker push ${REGISTRY_ADDRESS}/test-php-img:${IMAGE_TAG} app
-	sudo docker push ${REGISTRY_ADDRESS}/test-apache-img:${IMAGE_TAG} app
+	docker push ${REGISTRY_ADDRESS}/nginx:${IMAGE_TAG} app
+	docker push ${REGISTRY_ADDRESS}/php-cli:${IMAGE_TAG} app
+	docker push ${REGISTRY_ADDRESS}/php-fpm:${IMAGE_TAG} app
+
+prod-deploy:
+	ssh ${PRODUCTION_HOST} -P ${PRODUCTION_PORT} 'rm -rf docker-compose.yml .env'
+	scp -P ${PRODUCTION_PORT} docker-compose-production.yml ${PRODUCTION_HOST}:docker-compose.yml
+	ssh ${PRODUCTION_HOST} -P ${PRODUCTION_PORT} 'echo "REGISTRY_ADDRESS=${REGISTRY_ADDRESS}" >> .env'
+	ssh ${PRODUCTION_HOST} -P ${PRODUCTION_PORT} 'echo "IMAGE_TAG=${IMAGE_TAG}" >> .env'
+	ssh ${PRODUCTION_HOST} -P ${PRODUCTION_PORT} 'echo "MANAGER_APP_SECRET=${MANAGER_APP_SECRET}" >> .env'
+	ssh ${PRODUCTION_HOST} -P ${PRODUCTION_PORT} 'echo "MANAGER_DB_PASSWORD=${MANAGER_DB_PASSWORD}" >> .env'
+	ssh ${PRODUCTION_HOST} -P ${PRODUCTION_PORT} 'docker-compose pull'
+	ssh ${PRODUCTION_HOST} -P ${PRODUCTION_PORT} 'docker-compose --build -d'
 
 prod-cli:
-	sudo docker run --rm test-lamp-img php bin/index.php
+	docker run --rm test-lamp-img php bin/index.php
 
 docker-up:
-	sudo docker-compose up --build -d
+	docker-compose up --build -d
 
 docker-down:
-	sudo docker-compose down --remove-orphans
+	docker-compose down --remove-orphans
 
 docker-down-clear:
-	sudo docker-compose down -v --remove-orphans
+	docker-compose down -v --remove-orphans
 
 docker-pull:
-	sudo docker-compose pull
+	docker-compose pull
 
 docker-build:
-	sudo docker-compose build
+	docker-compose build
 
 app-composer-install:
 	docker-compose run --rm dev-php-cli composer install

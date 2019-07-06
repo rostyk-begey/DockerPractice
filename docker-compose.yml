@@ -2,12 +2,20 @@ version: '3'
 services:
   dev-php-apache:
     build:
-      context: ./docker/dev/apache
+      context: ./docker/dev/nginx
       dockerfile: Dockerfile
     volumes:
       - ./app:/app
+    depends_on:
+      - dev-php-fpm
     ports:
       - "8080:80"
+  dev-php-fpm:
+    build:
+      context: ./docker/dev/php-fpm
+      dockerfile: Dockerfile
+    volumes:
+      - ./app:/app
   dev-php-cli:
     build:
       context: ./docker/dev/php-cli

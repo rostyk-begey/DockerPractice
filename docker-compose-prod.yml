@@ -1,12 +1,23 @@
 version: '3'
 services:
   prod-php-apache:
-    build:
-      context: ./docker/prod/apache
-      dockerfile: Dockerfile
+    image: ${REGISTRY_ADDRESS}/nginx:${IMAGE_TAG}
+    restart: always
+    depends_on:
+      - test-php-fpm
     ports:
       - "8080:80"
+  prod-php-fpm:
+    image: ${REGISTRY_ADDRESS}/php-fpm:${IMAGE_TAG}
+    restart: always
+    environment:
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: pgsql://app:${DB_PASSSWORD}@postgress:5432/app
+      MAILER_URL: bull://localhost
   prod-php-cli:
-    build:
-      context: ./docker/prod/php-cli
-      dockerfile: Dockerfile
+    image: ${REGISTRY_ADDRESS}/php-cli:${IMAGE_TAG}
+    restart: always
+    environment:
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: pgsql://app:${DB_PASSSWORD}@postgress:5432/app
+      MAILER_URL: bull://localhost
